@@ -1,7 +1,7 @@
 start:
 	go build 
-	./user start
+	./voucher start
 
 cdb:
 	go build 
-	./user createDb
+	./voucher createDb
