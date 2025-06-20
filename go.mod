@@ -2,16 +2,14 @@ module github.com/huyshop/user
 
 go 1.23.7
 
-replace github.com/huyshop/header v0.0.23 => ../header
+replace github.com/huyshop/header v0.0.25 => ../header
 
 require (
-	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/go-redis/redis/v8 v8.11.5
 	github.com/go-sql-driver/mysql v1.9.0
 	github.com/joho/godotenv v1.5.1
 	github.com/rs/xid v1.6.0
 	github.com/urfave/cli/v2 v2.27.6
-	golang.org/x/crypto v0.36.0
 	xorm.io/xorm v1.3.9
 )
 
@@ -33,6 +31,7 @@ require (
 require (
 	filippo.io/edwards25519 v1.1.0 // indirect
 	github.com/huyshop/header v0.0.25
+	github.com/matoous/go-nanoid v1.5.1
 	golang.org/x/net v0.37.0 // indirect
 	golang.org/x/sys v0.31.0 // indirect
 	golang.org/x/text v0.23.0 // indirect

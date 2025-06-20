@@ -3,11 +3,14 @@ package db
 import (
 	"log"
 
+	pb "github.com/huyshop/header/voucher"
 	"xorm.io/xorm"
 )
 
 const (
-	tblVoucher = "voucher"
+	tblVoucher     = "voucher"
+	tblUserVoucher = "user_voucher"
+	tblCode        = "code"
 )
 
 func createTable(model interface{}, tblName string, engine *xorm.Engine) error {
@@ -32,8 +35,14 @@ func createTable(model interface{}, tblName string, engine *xorm.Engine) error {
 }
 
 func (d *DB) CreateDb() error {
-	// if err := createTable(&pb.Voucher{}, tblVoucher, d.engine); err != nil {
-	// 	return err
-	// }
+	if err := createTable(&pb.Voucher{}, tblVoucher, d.engine); err != nil {
+		return err
+	}
+	if err := createTable(&pb.UserVoucher{}, tblUserVoucher, d.engine); err != nil {
+		return err
+	}
+	if err := createTable(&pb.Code{}, tblCode, d.engine); err != nil {
+		return err
+	}
 	return nil
 }

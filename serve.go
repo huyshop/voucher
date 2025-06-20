@@ -20,7 +20,30 @@ type Voucher struct {
 	cache *redis.Client
 }
 
-type IDatabase interface{}
+type IDatabase interface {
+	InsertVoucher(req *pb.Voucher) (*pb.Voucher, error)
+	GetVoucher(req *pb.Voucher) (*pb.Voucher, error)
+	ListVoucher(req *pb.VoucherRequest) ([]*pb.Voucher, error)
+	IsVoucherExist(req *pb.Voucher) (bool, error)
+	UpdateVoucher(req *pb.Voucher) error
+	DeleteVoucher(req *pb.Voucher) error
+	CountVouchers(req *pb.VoucherRequest) (int64, error)
+
+	InsertCode(req *pb.Code) error
+	TransInsertCode(req *pb.Code) error
+	GetCode(req *pb.Code) (*pb.Code, error)
+	IsCodeExist(req *pb.Code) (bool, error)
+	ListCode(req *pb.CodeRequest) ([]*pb.Code, error)
+	CountCode(req *pb.CodeRequest) (int64, error)
+	UpdateCode(req *pb.Code) error
+
+	InsertUserVoucher(req *pb.UserVoucher) (*pb.UserVoucher, error)
+	GetUserVoucher(req *pb.UserVoucher) (*pb.UserVoucher, error)
+	ListUserVoucher(req *pb.UserVoucherRequest) ([]*pb.UserVoucher, error)
+	UpdateUserVoucher(req *pb.UserVoucher) error
+	DeleteUserVoucher(req *pb.UserVoucher) error
+	CountUserVoucher(req *pb.UserVoucherRequest) (int64, error)
+}
 
 func NewRedisCache(addr, pw string, db int) *redis.Client {
 	client := redis.NewClient(&redis.Options{
