@@ -49,3 +49,11 @@ func (v *Voucher) ListUserVouchers(ctx context.Context, in *pb.UserVoucherReques
 	}
 	return &pb.UserVouchers{UserVouchers: list, Total: int32(count)}, nil
 }
+
+func (v *Voucher) GetUserVoucher(ctx context.Context, in *pb.UserVoucher) (*pb.UserVoucher, error) {
+	uv, err := v.Db.GetUserVoucher(in)
+	if err != nil {
+		return nil, err
+	}
+	return uv, nil
+}

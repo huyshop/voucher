@@ -9,7 +9,7 @@ import (
 
 	"github.com/go-redis/redis/v8"
 	pb "github.com/huyshop/header/voucher"
-	"github.com/huyshop/user/db"
+	"github.com/huyshop/voucher/db"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/keepalive"
 	"google.golang.org/grpc/reflection"

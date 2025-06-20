@@ -8,7 +8,7 @@ import (
 
 	_ "github.com/go-sql-driver/mysql"
 	pb "github.com/huyshop/header/voucher"
-	"github.com/huyshop/user/utils"
+	"github.com/huyshop/voucher/utils"
 	"xorm.io/xorm"
 )
 
