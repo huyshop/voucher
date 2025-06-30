@@ -9,17 +9,48 @@ import (
 	"github.com/huyshop/voucher/utils"
 )
 
-func (v *Voucher) UseUserVoucher(ctx context.Context, in *pb.UserVoucher) (*pb.UserVoucher, error) {
-	if in.Id == "" {
+func (v *Voucher) CreateUserVoucher(ctx context.Context, in *pb.UserVoucher) (*pb.UserVoucher, error) {
+	if in.UserId == "" {
 		return nil, errors.New(utils.E_not_found_id)
 	}
-	uv, err := v.Db.GetUserVoucher(in)
+	if in.VoucherId == "" {
+		return nil, errors.New(utils.E_not_found_id)
+	}
+	code := utils.MakeCode()
+	codedata := &pb.Code{
+		Id:        utils.MakeCodeId(),
+		Code:      code,
+		VoucherId: in.VoucherId,
+		State:     pb.Code_got.String(),
+		CreatedAt: time.Now().Unix(),
+	}
+	in.Id = utils.MakeUserVoucherId()
+	in.CodeId = codedata.Id
+	in.State = pb.UserVoucher_got.String()
+	if err := v.Db.TransInsertUserVoucher(in, codedata); err != nil {
+		return nil, err
+	}
+	return in, nil
+}
+
+func (v *Voucher) UpdateUserVoucher(ctx context.Context, in *pb.UserVoucher) (*pb.UserVoucher, error) {
+	if in.UserId == "" || in.CodeId == "" {
+		return nil, errors.New(utils.E_not_found_id)
+	}
+	uv, err := v.Db.GetUserVoucher(&pb.UserVoucher{
+		UserId: in.UserId,
+		CodeId: in.CodeId,
+	})
 	if err != nil {
 		return nil, err
 	}
-	uv.State = pb.UserVoucher_used.String()
-	uv.UsedAt = time.Now().Unix()
-	if err := v.Db.UpdateUserVoucher(uv); err != nil {
+	code, err := v.Db.GetCode(&pb.Code{Id: uv.CodeId})
+	if err != nil {
+		return nil, err
+	}
+	uv.State = in.State
+	uv.UsedAt = in.UsedAt
+	if err := v.Db.TransUpdateUserVoucher(uv, code); err != nil {
 		return nil, err
 	}
 	return uv, nil

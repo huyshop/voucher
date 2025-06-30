@@ -2,7 +2,7 @@ module github.com/huyshop/voucher
 
 go 1.23.7
 
-replace github.com/huyshop/header v0.0.67 => ../header
+replace github.com/huyshop/header v0.0.84 => ../header
 
 require (
 	github.com/go-redis/redis/v8 v8.11.5
@@ -32,7 +32,7 @@ require (
 
 require (
 	filippo.io/edwards25519 v1.1.0 // indirect
-	github.com/huyshop/header v0.0.84
+	github.com/huyshop/header v0.0.85
 	github.com/matoous/go-nanoid v1.5.1
 	golang.org/x/net v0.37.0 // indirect
 	golang.org/x/sys v0.31.0 // indirect
