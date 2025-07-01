@@ -351,11 +351,15 @@ func (d *DB) GetUserVoucher(req *pb.UserVoucher) (*pb.UserVoucher, error) {
 }
 
 func (d *DB) listUserVoucherQuery(req *pb.UserVoucherRequest) *xorm.Session {
-	ss := d.engine.Table("voucher")
+	ss := d.engine.Table("user_voucher")
 	if len(req.GetIds()) > 0 {
 		ss.In("id", req.GetIds())
 	} else if req.GetId() != "" {
 		ss.And("id = ?", req.GetId())
+	}
+	if req.GetType() != "" {
+		ss.Join("INNER", "voucher", "user_voucher.voucher_id = voucher.id")
+		ss.And("voucher.type = ?", req.GetType())
 	}
 	if req.GetState() != "" {
 		ss.And("state = ?", req.GetState())
@@ -372,7 +376,7 @@ func (d *DB) listUserVoucherQuery(req *pb.UserVoucherRequest) *xorm.Session {
 func (d *DB) ListUserVoucher(req *pb.UserVoucherRequest) ([]*pb.UserVoucher, error) {
 	uv := []*pb.UserVoucher{}
 	ss := d.listUserVoucherQuery(req)
-	err := ss.Desc(".created_at").Find(&uv)
+	err := ss.Desc("user_voucher.created_at").Find(&uv)
 	if err != nil {
 		log.Println("get list:", err)
 		return nil, err

@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"errors"
+	"log"
 	"time"
 
 	pb "github.com/huyshop/header/voucher"
@@ -57,6 +58,7 @@ func (v *Voucher) UpdateUserVoucher(ctx context.Context, in *pb.UserVoucher) (*p
 }
 
 func (v *Voucher) ListUserVouchers(ctx context.Context, in *pb.UserVoucherRequest) (*pb.UserVouchers, error) {
+	log.Println("ListUserVouchers", in)
 	list, err := v.Db.ListUserVoucher(in)
 	if err != nil {
 		return nil, err
@@ -69,6 +71,8 @@ func (v *Voucher) ListUserVouchers(ctx context.Context, in *pb.UserVoucherReques
 }
 
 func (v *Voucher) GetUserVoucher(ctx context.Context, in *pb.UserVoucher) (*pb.UserVoucher, error) {
+
+	log.Println("GetUserVoucher", in)
 	uv, err := v.Db.GetUserVoucher(in)
 	if err != nil {
 		return nil, err
