@@ -224,16 +224,19 @@ func (d *DB) TransInsertUserVoucher(req *pb.UserVoucher, code *pb.Code) error {
 	return nil
 }
 
-func (d *DB) TransUpdateUserVoucher(uv *pb.UserVoucher, code *pb.Code) error {
+func (d *DB) TransUpdateUserVoucher(uv *pb.UserVoucher) error {
 	sess := d.engine.NewSession()
 	defer sess.Close()
 	if err := sess.Begin(); err != nil {
 		return err
 	}
+	time := time.Now().Unix()
+	uv.UsedAt = time
+	uv.UpdatedAt = time
 	count, err := sess.Update(uv, &pb.UserVoucher{
 		UserId:    uv.GetUserId(),
 		VoucherId: uv.GetVoucherId(),
-		CodeId:    code.GetId(),
+		CodeId:    uv.GetCodeId(),
 	})
 	if err != nil {
 		log.Print(err)
@@ -244,19 +247,29 @@ func (d *DB) TransUpdateUserVoucher(uv *pb.UserVoucher, code *pb.Code) error {
 		sess.Rollback()
 		return errors.New(utils.E_can_not_update)
 	}
-	count, err = sess.Update(code, &pb.Code{
-		Code:      code.GetCode(),
-		VoucherId: code.GetVoucherId(),
-		Id:        code.GetId(),
-	})
-	if err != nil {
-		log.Print(err)
-		sess.Rollback()
-		return err
-	}
-	if count == 0 {
-		sess.Rollback()
-		return errors.New(utils.E_can_not_update)
+	if uv.State == pb.UserVoucher_used.String() {
+		code := &pb.Code{Id: uv.CodeId, VoucherId: uv.VoucherId}
+		err := sess.Find(code)
+		if err != nil {
+			sess.Rollback()
+			return err
+		}
+		code.State = pb.Code_used.String()
+		code.UsedAt = time
+		code.UpdatedAt = time
+		count, err = sess.Update(code, &pb.Code{
+			Code:      code.GetCode(),
+			VoucherId: code.GetVoucherId(),
+			Id:        code.GetId(),
+		})
+		if err != nil {
+			sess.Rollback()
+			return err
+		}
+		if count == 0 {
+			sess.Rollback()
+			return errors.New(utils.E_can_not_update)
+		}
 	}
 	if err := sess.Commit(); err != nil {
 		sess.Rollback()

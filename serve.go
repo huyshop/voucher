@@ -32,7 +32,7 @@ type IDatabase interface {
 	InsertCode(req *pb.Code) error
 	TransInsertCode(req *pb.Code) error
 	TransInsertUserVoucher(req *pb.UserVoucher, code *pb.Code) error
-	TransUpdateUserVoucher(uv *pb.UserVoucher, code *pb.Code) error
+	TransUpdateUserVoucher(uv *pb.UserVoucher) error
 	GetCode(req *pb.Code) (*pb.Code, error)
 	IsCodeExist(req *pb.Code) (bool, error)
 	ListCode(req *pb.CodeRequest) ([]*pb.Code, error)

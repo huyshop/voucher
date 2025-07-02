@@ -45,13 +45,8 @@ func (v *Voucher) UpdateUserVoucher(ctx context.Context, in *pb.UserVoucher) (*p
 	if err != nil {
 		return nil, err
 	}
-	code, err := v.Db.GetCode(&pb.Code{Id: uv.CodeId})
-	if err != nil {
-		return nil, err
-	}
 	uv.State = in.State
-	uv.UsedAt = in.UsedAt
-	if err := v.Db.TransUpdateUserVoucher(uv, code); err != nil {
+	if err := v.Db.TransUpdateUserVoucher(uv); err != nil {
 		return nil, err
 	}
 	return uv, nil
