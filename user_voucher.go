@@ -17,6 +17,24 @@ func (v *Voucher) CreateUserVoucher(ctx context.Context, in *pb.UserVoucher) (*p
 	if in.VoucherId == "" {
 		return nil, errors.New(utils.E_not_found_id)
 	}
+	voucher, err := v.Db.GetVoucher(&pb.Voucher{Id: in.VoucherId})
+	if err != nil {
+		return nil, err
+	}
+	if voucher.RemainingQuantity == 0 {
+		return nil, errors.New(utils.E_voucher_quantity_is_out)
+	}
+	if voucher.GetType() == pb.Voucher_free.String() {
+		// user chỉ đc 1 code
+		uv, err := v.Db.GetUserVoucher(&pb.UserVoucher{UserId: in.UserId, VoucherId: in.VoucherId})
+		if err != nil {
+			log.Println("err: ", err)
+			return nil, err
+		}
+		if uv != nil {
+			return nil, errors.New(utils.E_voucher_quantity_is_out)
+		}
+	}
 	code := utils.MakeCode()
 	codedata := &pb.Code{
 		Id:        utils.MakeCodeId(),
