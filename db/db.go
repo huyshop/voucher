@@ -249,10 +249,14 @@ func (d *DB) TransUpdateUserVoucher(uv *pb.UserVoucher) error {
 	}
 	if uv.State == pb.UserVoucher_used.String() {
 		code := &pb.Code{Id: uv.CodeId, VoucherId: uv.VoucherId}
-		err := sess.Find(code)
+		b, err := sess.Get(code)
 		if err != nil {
 			sess.Rollback()
 			return err
+		}
+		if !b {
+			sess.Rollback()
+			return errors.New(utils.E_not_found)
 		}
 		code.State = pb.Code_used.String()
 		code.UsedAt = time
